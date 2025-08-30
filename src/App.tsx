@@ -1,11 +1,11 @@
-import { createEffect, createSignal, type Component } from 'solid-js';
-import { createStore, produce } from 'solid-js/store';
-import { BanyanDocument, createNode } from './data/tree';
-import { v4 as uuidv4 } from 'uuid';
-import { formatISODate } from './utils';
-import { DocumentEditor } from './components/DocumentEditor';
+import { createEffect, createSignal, type Component } from "solid-js";
+import { createStore, produce } from "solid-js/store";
+import { BanyanDocument, createBanyanNode } from "./data/tree";
+import { v4 as uuidv4 } from "uuid";
+import { formatISODate } from "./utils";
+import { DocumentEditor } from "./components/DocumentEditor";
 
-const LOCAL_STORAGE_KEY = 'banyan_documents';
+const LOCAL_STORAGE_KEY = "banyan_documents";
 interface BanyanStore {
   documents: BanyanDocument[];
 }
@@ -29,32 +29,32 @@ const App: Component = () => {
   const addDocument = () => {
     const newDocument: BanyanDocument = {
       id: uuidv4(),
-      title: 'New Document',
+      title: "New Document",
       createdAt: new Date().toISOString(),
-      modifiedAt: new Date().toISOString(),
-      root: createNode(),
+      updatedAt: new Date().toISOString(),
+      root: createBanyanNode(),
     };
     // Main root node is hidden from user, so they can add multiple "roots" in their view of the document.
     // Start them off with a new top-level node.
-    newDocument.root.children = [createNode()];
+    newDocument.root.children = [createBanyanNode()];
 
     setStore(
       produce((draft) => {
         draft.documents.push(newDocument);
-      })
+      }),
     );
   };
 
   return (
     <>
-      <p class='text-4xl text-green-700 text-center py-20'>Hello tailwind!</p>
+      <p class="text-4xl text-green-700 text-center py-20">Hello tailwind!</p>
       <button onClick={addDocument}>+ New Document</button>
       <pre>Documents: {JSON.stringify(store.documents)}</pre>
       {store.documents.map((doc, index) => (
         <article onClick={() => setActiveDocIndex(index)}>
           <h2>{doc.title}</h2>
           <p>Created: {formatISODate(doc.createdAt)}</p>
-          <p>Modified: {formatISODate(doc.modifiedAt)}</p>
+          <p>Modified: {formatISODate(doc.updatedAt)}</p>
         </article>
       ))}
 

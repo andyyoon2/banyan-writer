@@ -1,4 +1,4 @@
-import { BanyanNode } from '../data/tree';
+import { BanyanNode } from "../data/tree";
 
 interface DocumentNodeProps {
   node: BanyanNode;

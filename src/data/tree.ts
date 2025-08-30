@@ -1,10 +1,10 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 export interface BanyanDocument {
   id: string;
   title: string;
   createdAt: string;
-  modifiedAt: string;
+  updatedAt: string;
   /** root is hidden from the user, so user can have multiple "roots" in their view of the document */
   root: BanyanNode | null;
 }
@@ -15,10 +15,10 @@ export interface BanyanNode {
   children: BanyanNode[];
 }
 
-export function createNode() {
+export function createBanyanNode(content?: string): BanyanNode {
   return {
     id: uuidv4(),
-    content: '',
+    content: content ?? "",
     children: [],
   };
 }
