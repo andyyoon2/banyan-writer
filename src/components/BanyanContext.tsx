@@ -102,7 +102,7 @@ export const BanyanProvider = (props: BanyanProviderProps) => {
     // Find the node by id, then update its content.
     // Could optimize lookups by passing through indexes
     const editedNode = findNodeById(id, activeDoc().root);
-    console.log(editedNode);
+    console.log(editedNode.id, editedNode.content);
     // setStore(
     //   produce((draft) => {
     //     // Assume activeDoc is valid
