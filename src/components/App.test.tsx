@@ -1,6 +1,7 @@
+// TODO: Everything is displayed in top-level App rn, fix later
 import { expect, test } from "vitest";
 import { render } from "@solidjs/testing-library";
-import { DocumentEditor } from "./DocumentEditor";
+import { DocumentNode } from "./DocumentNode";
 import { BanyanDocument, createBanyanNode } from "../data/tree";
 
 const getMockDocument = (): BanyanDocument => ({
@@ -16,7 +17,7 @@ test("renders all node content", () => {
   document.root.children.push(createBanyanNode("Child Node 1"));
   document.root.children.push(createBanyanNode("Child Node 2"));
 
-  const { getByText } = render(() => <DocumentEditor document={document} />);
+  const { getByText } = render(() => <DocumentNode node={document.root} />);
   expect(getByText("Child Node 1")).toBeDefined();
   expect(getByText("Child Node 2")).toBeDefined();
 });

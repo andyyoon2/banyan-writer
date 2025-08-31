@@ -1,4 +1,5 @@
 import { BanyanNode } from "../data/tree";
+import { NodeEditor } from "./NodeEditor";
 
 interface DocumentNodeProps {
   node: BanyanNode;
@@ -7,7 +8,7 @@ interface DocumentNodeProps {
 export function DocumentNode(props: DocumentNodeProps) {
   return (
     <div>
-      {props.node.content}
+      <NodeEditor content={props.node.content} />
       {props.node.children.map((child) => (
         <DocumentNode node={child} />
       ))}
