@@ -1,8 +1,13 @@
-import { expect, test } from "vitest";
-import { render } from "@solidjs/testing-library";
+import { expect, test, vi } from "vitest";
+import { render, screen } from "@solidjs/testing-library";
 import userEvent from "@testing-library/user-event";
 import { DocumentNode } from "../DocumentNode";
-import { createBanyanNode } from "../../data/tree";
+import { BanyanDocument, createBanyanNode } from "../../data/tree";
+import {
+  BanyanProvider,
+  BanyanStore,
+  useBanyanContext,
+} from "../BanyanContext";
 
 test("renders all node content", () => {
   const root = createBanyanNode();
@@ -18,8 +23,21 @@ test("updates screen with content edits", async () => {
   // Arrange
   const user = userEvent.setup();
   const root = createBanyanNode("Hello");
+  const initialStore = {
+    documents: [{ root } as BanyanDocument],
+  } satisfies BanyanStore;
 
-  const { getByText, getByRole } = render(() => <DocumentNode node={root} />);
+  // Need to connect the DocumentNode to the store for reactive updates
+  const Wrapper = () => {
+    const { activeDoc } = useBanyanContext();
+    return <DocumentNode node={activeDoc().root} />;
+  };
+
+  const { getByText, getByRole } = render(() => (
+    <BanyanProvider initialStore={initialStore}>
+      <Wrapper />
+    </BanyanProvider>
+  ));
 
   // Act
   await user.type(getByRole("textbox"), ", world!");

@@ -13,7 +13,7 @@ import { BanyanDocument, createBanyanNode } from "../data/tree";
 // --------------------------------------------------
 // Interfaces and helpers
 
-interface BanyanStore {
+export interface BanyanStore {
   documents: BanyanDocument[];
 }
 
@@ -27,6 +27,8 @@ interface BanyanContextType {
 
 interface BanyanProviderProps {
   children: JSXElement;
+  // Initialize the store. By default, the provider reads the value from localStorage.
+  initialStore?: BanyanStore;
 }
 
 const LOCAL_STORAGE_KEY = "banyan_documents";
@@ -57,13 +59,21 @@ export const BanyanProvider = (props: BanyanProviderProps) => {
   // --------------------------------------------------
   // Setup store with local storage syncing
 
-  const initialDocuments = localStorage.getItem(LOCAL_STORAGE_KEY)
-    ? JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!)
-    : [];
+  let initialStore = props.initialStore;
+  if (!initialStore) {
+    let initialDocuments: BanyanDocument[];
+    try {
+      initialDocuments = localStorage.getItem(LOCAL_STORAGE_KEY)
+        ? JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!)
+        : [];
+    } catch (error) {
+      initialDocuments = [];
+    }
 
-  const [store, setStore] = createStore<BanyanStore>({
-    documents: initialDocuments,
-  });
+    initialStore = { documents: initialDocuments };
+  }
+
+  const [store, setStore] = createStore<BanyanStore>(initialStore);
   const [activeDocIndex, setActiveDocIndex] = createSignal(0);
   const activeDoc = () =>
     store.documents.length ? store.documents[activeDocIndex()] : null;
