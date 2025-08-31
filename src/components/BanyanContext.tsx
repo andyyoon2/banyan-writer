@@ -99,16 +99,17 @@ export const BanyanProvider = (props: BanyanProviderProps) => {
       return;
     }
 
-    // Find the node by id, then update its content.
-    // Could optimize lookups by passing through indexes
-    const editedNode = findNodeById(id, activeDoc().root);
-    console.log(editedNode.id, editedNode.content);
-    // setStore(
-    //   produce((draft) => {
-    //     // Assume activeDoc is valid
-    //     const editedNode = findNodeById(id, activeDoc().root);
-    //   }),
-    // );
+    // Grab the active document, then use produce to update it
+    setStore(
+      "documents",
+      activeDocIndex(),
+      produce((activeDoc) => {
+        // Could optimize lookups by passing through indexes
+        const editedNode = findNodeById(id, activeDoc.root);
+        editedNode.content = content;
+        activeDoc.updatedAt = new Date().toISOString();
+      }),
+    );
   };
 
   // --------------------------------------------------
