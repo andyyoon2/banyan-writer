@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "check": "biome check --write"
   },
   "license": "MIT",
   "dependencies": {
@@ -16,6 +17,7 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.2.5",
     "@solidjs/testing-library": "^0.8.10",
     "@tailwindcss/vite": "^4.0.7",
     "@testing-library/user-event": "^14.6.1",
