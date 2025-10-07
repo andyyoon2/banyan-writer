@@ -18,8 +18,9 @@ export const Documents = () => {
 				</article>
 			))}
 
-			{activeDoc()?.root &&
-				activeDoc().root.children.map((child) => <DocumentNode node={child} />)}
+			{activeDoc()?.root?.children.map((child) => (
+				<DocumentNode node={child} />
+			))}
 		</>
 	);
 };

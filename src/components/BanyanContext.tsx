@@ -64,9 +64,10 @@ export const BanyanProvider = (props: BanyanProviderProps) => {
 		let initialDocuments: BanyanDocument[];
 		try {
 			initialDocuments = localStorage.getItem(LOCAL_STORAGE_KEY)
-				? JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!)
+				? // biome-ignore lint/style/noNonNullAssertion: We know it exists
+					JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)!)
 				: [];
-		} catch (error) {
+		} catch (_error) {
 			initialDocuments = [];
 		}
 

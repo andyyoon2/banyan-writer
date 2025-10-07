@@ -12,4 +12,5 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 	);
 }
 
+// biome-ignore lint/style/noNonNullAssertion: We know it exists
 render(() => <App />, root!);

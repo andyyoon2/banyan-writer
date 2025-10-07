@@ -1,6 +1,6 @@
-import { render, screen } from "@solidjs/testing-library";
+import { render } from "@solidjs/testing-library";
 import userEvent from "@testing-library/user-event";
-import { expect, test, vi } from "vitest";
+import { expect, test } from "vitest";
 import { type BanyanDocument, createBanyanNode } from "../../data/tree";
 import {
 	BanyanProvider,
