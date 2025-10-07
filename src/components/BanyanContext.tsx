@@ -9,6 +9,10 @@ import { createStore, produce } from "solid-js/store";
 import { v4 as uuidv4 } from "uuid";
 import { type BanyanDocument, createBanyanNode } from "../data/tree";
 import { findNodeById } from "../utils";
+import { v4 as uuidv4 } from "uuid";
+import { BanyanDocument, createBanyanNode } from "../data/tree";
+import { v4 as uuidv4 } from "uuid";
+import { BanyanDocument, BanyanNode, createBanyanNode } from "../data/tree";
 
 // --------------------------------------------------
 // Interfaces and helpers
@@ -18,11 +22,12 @@ export interface BanyanStore {
 }
 
 interface BanyanContextType {
-	store: BanyanStore;
-	activeDoc: () => BanyanDocument | undefined;
-	setActiveDocIndex: (index: number) => void;
-	addDocument: () => void;
-	handleNodeChange: (id: string, content: string) => void;
+  store: BanyanStore;
+  activeDoc: () => BanyanDocument | undefined;
+  setActiveDocIndex: (index: number) => void;
+  addDocument: () => void;
+  addChildNode: (parentId: string, content?: string) => void;
+  handleNodeChange: (id: string, content: string) => void;
 }
 
 interface BanyanProviderProps {
@@ -37,11 +42,12 @@ const LOCAL_STORAGE_KEY = "banyan_documents";
 // useBanyanContext
 
 const BanyanContext = createContext<BanyanContextType>({
-	store: { documents: [] },
-	activeDoc: () => undefined,
-	setActiveDocIndex: () => {},
-	addDocument: () => {},
-	handleNodeChange: () => {},
+  store: { documents: [] },
+  activeDoc: () => undefined,
+  setActiveDocIndex: () => {},
+  addDocument: () => {},
+  addChildNode: () => {},
+  handleNodeChange: () => {},
 });
 
 export const useBanyanContext = () => {
@@ -123,16 +129,37 @@ export const BanyanProvider = (props: BanyanProviderProps) => {
 		);
 	};
 
-	// --------------------------------------------------
-	// Return context value
+  const addChildNode = (parentId: string, content?: string) => {
+    if (!store.documents.length) {
+      return;
+    }
 
-	const banyanContextValue = {
-		store,
-		activeDoc,
-		setActiveDocIndex,
-		addDocument,
-		handleNodeChange,
-	} satisfies BanyanContextType;
+    // Grab the active document, then use produce to update it
+    setStore(
+      "documents",
+      activeDocIndex(),
+      produce((activeDoc) => {
+        const parent = findNodeById(parentId, activeDoc.root);
+        if (!parent) {
+          throw new Error("Invalid parent id.");
+        }
+        const child = createBanyanNode(content);
+        parent.children.push(child);
+      }),
+    );
+  }
+
+  // --------------------------------------------------
+  // Return context value
+
+  const banyanContextValue = {
+    store,
+    activeDoc,
+    setActiveDocIndex,
+    addDocument,
+    addChildNode,
+    handleNodeChange,
+  } satisfies BanyanContextType;
 
 	return (
 		<BanyanContext.Provider value={banyanContextValue}>
