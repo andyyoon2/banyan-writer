@@ -19,7 +19,7 @@ export interface BanyanStore {
 
 interface BanyanContextType {
 	store: BanyanStore;
-	activeDoc: () => BanyanDocument | undefined;
+	activeDoc: () => BanyanDocument | null;
 	setActiveDocIndex: (index: number) => void;
 	addDocument: () => void;
 	addChildNode: (parentId: string, content?: string) => void;
@@ -39,7 +39,7 @@ const LOCAL_STORAGE_KEY = "banyan_documents";
 
 const BanyanContext = createContext<BanyanContextType>({
 	store: { documents: [] },
-	activeDoc: () => undefined,
+	activeDoc: () => null,
 	setActiveDocIndex: () => {},
 	addDocument: () => {},
 	addChildNode: () => {},

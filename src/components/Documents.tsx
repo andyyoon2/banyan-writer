@@ -8,7 +8,9 @@ export const Documents = () => {
 
 	return (
 		<>
-			<button onClick={addDocument}>+ New Document</button>
+			<button type="button" onClick={addDocument}>
+				+ New Document
+			</button>
 			<pre class="whitespace-pre-wrap">
 				Documents: {JSON.stringify(store.documents)}
 			</pre>
