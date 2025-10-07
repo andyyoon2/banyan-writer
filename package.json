@@ -1,34 +1,34 @@
 {
-  "name": "vite-template-solid",
-  "version": "0.0.0",
-  "description": "",
-  "type": "module",
-  "scripts": {
-    "start": "vite",
-    "dev": "vite",
-    "build": "vite build",
-    "serve": "vite preview",
-    "test": "vitest",
-    "check": "biome check --write"
-  },
-  "license": "MIT",
-  "dependencies": {
-    "solid-js": "^1.9.5",
-    "uuid": "^11.1.0"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.2.5",
-    "@solidjs/testing-library": "^0.8.10",
-    "@tailwindcss/vite": "^4.0.7",
-    "@testing-library/user-event": "^14.6.1",
-    "jsdom": "^26.1.0",
-    "tailwindcss": "^4.0.7",
-    "typescript": "^5.7.2",
-    "vite": "^6.0.0",
-    "vite-plugin-solid": "^2.11.6",
-    "vitest": "^3.2.4"
-  },
-  "trustedDependencies": [
-    "@tailwindcss/oxide"
-  ]
+	"name": "vite-template-solid",
+	"version": "0.0.0",
+	"description": "",
+	"type": "module",
+	"scripts": {
+		"start": "vite",
+		"dev": "vite",
+		"build": "vite build",
+		"serve": "vite preview",
+		"test": "vitest",
+		"check": "biome check --write"
+	},
+	"license": "MIT",
+	"dependencies": {
+		"solid-js": "^1.9.5",
+		"uuid": "^11.1.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.2.5",
+		"@solidjs/testing-library": "^0.8.10",
+		"@tailwindcss/vite": "^4.0.7",
+		"@testing-library/user-event": "^14.6.1",
+		"jsdom": "^26.1.0",
+		"tailwindcss": "^4.0.7",
+		"typescript": "^5.7.2",
+		"vite": "^6.0.0",
+		"vite-plugin-solid": "^2.11.6",
+		"vitest": "^3.2.4"
+	},
+	"trustedDependencies": [
+		"@tailwindcss/oxide"
+	]
 }
