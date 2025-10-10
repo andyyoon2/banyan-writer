@@ -7,17 +7,19 @@ interface DocumentNodeProps {
 }
 
 export function DocumentNode(props: DocumentNodeProps) {
-	const { handleNodeChange } = useBanyanContext();
+	const { handleNodeChange, addChildNode } = useBanyanContext();
 
 	const handleInput = (event: InputEvent) => {
 		const value = (event.currentTarget as HTMLTextAreaElement).value;
 		handleNodeChange(props.node.id, value);
 	};
 
+	const handleAddChildNode = () => {
+		addChildNode(props.node.id);
+	};
+
 	return (
 		<div class="flex flex-col gap-4">
-			<p>{props.node.id}</p>
-
 			<NodeEditor content={props.node.content} onInput={handleInput} />
 
 			{props.node.children.map((child) => (

@@ -17,5 +17,12 @@ export function findNodeById(
 	if (searchRoot.id === id) {
 		return searchRoot;
 	}
-	return searchRoot.children.find((child) => findNodeById(id, child));
+
+	for (const child of searchRoot.children) {
+		const result = findNodeById(id, child);
+		if (result) {
+			return result;
+		}
+	}
+	return null;
 }
