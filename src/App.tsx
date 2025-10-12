@@ -5,8 +5,10 @@ import { Documents } from "./components/Documents";
 const App: Component = () => {
 	return (
 		<BanyanProvider>
-			<p class="text-4xl text-green-700 text-center py-20">Hello tailwind!</p>
-			<Documents />
+			<main class="p-4">
+				<h1 class="font-semibold">Banyan Writer</h1>
+				<Documents />
+			</main>
 		</BanyanProvider>
 	);
 };

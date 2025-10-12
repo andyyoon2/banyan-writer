@@ -5,9 +5,9 @@ interface NodeEditorProps {
 
 export const NodeEditor = (props: NodeEditorProps) => {
 	return (
-		<div class="bg-amber-50 w-lg p-2 font-mono">
-			{props.content}
+		<div class="bg-neutral-100 w-lg p-4 font-mono flex gap-4">
 			<textarea value={props.content} onInput={props.onInput} />
+			<div>{props.content}</div>
 		</div>
 	);
 };

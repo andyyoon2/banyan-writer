@@ -11,20 +11,27 @@ export const Documents = () => {
 			<button type="button" onClick={addDocument}>
 				+ New Document
 			</button>
-			<pre class="whitespace-pre-wrap">
-				Documents: {JSON.stringify(store.documents)}
-			</pre>
 			{store.documents.map((doc, index) => (
-				<article onClick={() => setActiveDocIndex(index)}>
+				<button type="button" onClick={() => setActiveDocIndex(index)}>
 					<h2>{doc.title}</h2>
 					<p>Created: {formatISODate(doc.createdAt)}</p>
 					<p>Modified: {formatISODate(doc.updatedAt)}</p>
-				</article>
+				</button>
 			))}
 
-			{activeDoc()?.root?.children.map((child) => (
-				<DocumentNode node={child} />
-			))}
+			<div class="flex flex-col gap-4">
+				<strong class="font-semibold">{activeDoc()?.title}</strong>
+
+				<pre class="whitespace-pre-wrap">
+					{JSON.stringify(activeDoc(), null, 2)}
+				</pre>
+
+				{activeDoc()?.root && <DocumentNode node={activeDoc().root} />}
+
+				{/*{activeDoc()?.root?.children.map((child) => (
+					<DocumentNode node={child} />
+				))}*/}
+			</div>
 		</>
 	);
 };
