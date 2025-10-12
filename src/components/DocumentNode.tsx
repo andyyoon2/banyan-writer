@@ -25,7 +25,7 @@ export function DocumentNode(props: DocumentNodeProps) {
 
 				<button
 					type="button"
-					class="border border-neutral-300 rounded px-4 py-1 cursor-pointer"
+					class="border border-primary-300 dark:border-primary-700 rounded px-4 py-1 cursor-pointer"
 					onClick={handleAddChildNode}
 				>
 					Add child node
