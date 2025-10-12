@@ -22,15 +22,15 @@ export const Documents = () => {
 			<div class="flex flex-col gap-4">
 				<strong class="font-semibold">{activeDoc()?.title}</strong>
 
-				<pre class="whitespace-pre-wrap">
-					{JSON.stringify(activeDoc(), null, 2)}
-				</pre>
-
 				{activeDoc()?.root && <DocumentNode node={activeDoc().root} />}
 
 				{/*{activeDoc()?.root?.children.map((child) => (
 					<DocumentNode node={child} />
 				))}*/}
+
+				<pre class="whitespace-pre-wrap">
+					{JSON.stringify(activeDoc(), null, 2)}
+				</pre>
 			</div>
 		</>
 	);
