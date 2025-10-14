@@ -17,7 +17,7 @@ export interface BanyanStore {
 	documents: BanyanDocument[];
 }
 
-interface BanyanContextType {
+export interface BanyanContextType {
 	store: BanyanStore;
 	activeDoc: () => BanyanDocument | null;
 	setActiveDocIndex: (index: number) => void;

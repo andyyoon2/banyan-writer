@@ -2,29 +2,41 @@
 
 import { renderHook } from "@solidjs/testing-library";
 import { describe, expect, test } from "vitest";
-import { type BanyanDocument, createBanyanNode } from "../../data/tree";
 import {
+	type BanyanDocument,
+	type BanyanNode,
+	createBanyanNode,
+} from "../../data/tree";
+import {
+	type BanyanContextType,
 	BanyanProvider,
 	type BanyanStore,
 	useBanyanContext,
 } from "../BanyanContext";
 
+/**
+ * Create the banyan context with the given root as the first document.
+ * @returns The resulting BanyanContext
+ */
+function setupBanyanContext(root: BanyanNode): BanyanContextType {
+	const initialStore = {
+		documents: [{ root } as BanyanDocument],
+	} satisfies BanyanStore;
+
+	const { result } = renderHook(() => useBanyanContext(), {
+		wrapper: (props) => (
+			<BanyanProvider initialStore={initialStore}>
+				{props.children}
+			</BanyanProvider>
+		),
+	});
+	return result;
+}
+
 describe("addChildNode", () => {
 	test("adds new child node under the given node", () => {
 		const root = createBanyanNode("root");
-		const initialStore = {
-			documents: [{ root } as BanyanDocument],
-		} satisfies BanyanStore;
-
-		const { result } = renderHook(() => useBanyanContext(), {
-			wrapper: (props) => (
-				<BanyanProvider initialStore={initialStore}>
-					{props.children}
-				</BanyanProvider>
-			),
-		});
-
-		const { store, addChildNode } = result;
+		const { store, addChildNode } = setupBanyanContext(root);
 		expect(store.documents[0].root.children.length).toBe(0);
 
 		addChildNode(root.id);
@@ -33,19 +45,8 @@ describe("addChildNode", () => {
 
 	test("errors if given invalid parent ID", () => {
 		const root = createBanyanNode("root");
-		const initialStore = {
-			documents: [{ root } as BanyanDocument],
-		} satisfies BanyanStore;
+		const { addChildNode } = setupBanyanContext(root);
 
-		const { result } = renderHook(() => useBanyanContext(), {
-			wrapper: (props) => (
-				<BanyanProvider initialStore={initialStore}>
-					{props.children}
-				</BanyanProvider>
-			),
-		});
-
-		const { addChildNode } = result;
 		expect(() => addChildNode("invalid")).toThrowError();
 	});
 });
@@ -53,20 +54,8 @@ describe("addChildNode", () => {
 describe("handleNodeChange", () => {
 	test("updates node content", () => {
 		const root = createBanyanNode("root");
-		const initialStore = {
-			documents: [{ root } as BanyanDocument],
-		} satisfies BanyanStore;
-
-		const { result } = renderHook(() => useBanyanContext(), {
-			wrapper: (props) => (
-				<BanyanProvider initialStore={initialStore}>
-					{props.children}
-				</BanyanProvider>
-			),
-		});
-
+		const { store, handleNodeChange } = setupBanyanContext(root);
 		// TODO: I shouldn't be testing by indexing documents. Should expose a getter from the context and use that.
-		const { store, handleNodeChange } = result;
 		expect(store.documents[0].root.content).toEqual("root");
 		handleNodeChange(root.id, "new content");
 		expect(store.documents[0].root.content).toEqual("new content");
@@ -77,19 +66,7 @@ describe("handleNodeChange", () => {
 		const child = createBanyanNode("child content");
 		root.children.push(child);
 
-		const initialStore = {
-			documents: [{ root } as BanyanDocument],
-		} satisfies BanyanStore;
-
-		const { result } = renderHook(() => useBanyanContext(), {
-			wrapper: (props) => (
-				<BanyanProvider initialStore={initialStore}>
-					{props.children}
-				</BanyanProvider>
-			),
-		});
-
-		const { store, handleNodeChange } = result;
+		const { store, handleNodeChange } = setupBanyanContext(root);
 		expect(store.documents[0].root.children[0].content).toEqual(
 			"child content",
 		);
@@ -110,19 +87,7 @@ describe("moveNode", () => {
 		root.children.push(child1);
 		root.children.push(child2);
 
-		const initialStore = {
-			documents: [{ root } as BanyanDocument],
-		} satisfies BanyanStore;
-
-		const { result } = renderHook(() => useBanyanContext(), {
-			wrapper: (props) => (
-				<BanyanProvider initialStore={initialStore}>
-					{props.children}
-				</BanyanProvider>
-			),
-		});
-
-		const { store, moveNode } = result;
+		const { store, moveNode } = setupBanyanContext(root);
 
 		const assertNoChange = () => {
 			expect(store.documents[0].root).toEqual(root);
@@ -204,19 +169,7 @@ describe("moveNode", () => {
 		root.children.push(child1);
 		root.children.push(child2);
 
-		const initialStore = {
-			documents: [{ root } as BanyanDocument],
-		} satisfies BanyanStore;
-
-		const { result } = renderHook(() => useBanyanContext(), {
-			wrapper: (props) => (
-				<BanyanProvider initialStore={initialStore}>
-					{props.children}
-				</BanyanProvider>
-			),
-		});
-
-		const { store, moveNode } = result;
+		const { store, moveNode } = setupBanyanContext(root);
 
 		// Move first child to index 1
 		moveNode({
@@ -248,19 +201,7 @@ describe("moveNode", () => {
 		root.children.push(child1);
 		root.children.push(child2);
 
-		const initialStore = {
-			documents: [{ root } as BanyanDocument],
-		} satisfies BanyanStore;
-
-		const { result } = renderHook(() => useBanyanContext(), {
-			wrapper: (props) => (
-				<BanyanProvider initialStore={initialStore}>
-					{props.children}
-				</BanyanProvider>
-			),
-		});
-
-		const { store, moveNode } = result;
+		const { store, moveNode } = setupBanyanContext(root);
 
 		// Move grandchild from child1 to child2
 		moveNode({
@@ -283,19 +224,7 @@ describe("moveNode", () => {
 		root.children.push(child1);
 		root.children.push(child2);
 
-		const initialStore = {
-			documents: [{ root } as BanyanDocument],
-		} satisfies BanyanStore;
-
-		const { result } = renderHook(() => useBanyanContext(), {
-			wrapper: (props) => (
-				<BanyanProvider initialStore={initialStore}>
-					{props.children}
-				</BanyanProvider>
-			),
-		});
-
-		const { store, moveNode } = result;
+		const { store, moveNode } = setupBanyanContext(root);
 
 		// Move the child with the grandchild
 		moveNode({
