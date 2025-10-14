@@ -5,7 +5,6 @@ export interface BanyanDocument {
 	title: string;
 	createdAt: string;
 	updatedAt: string;
-	/** root is hidden from the user, so user can have multiple "roots" in their view of the document */
 	root: BanyanNode;
 }
 

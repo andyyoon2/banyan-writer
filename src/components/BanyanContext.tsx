@@ -96,9 +96,6 @@ export const BanyanProvider = (props: BanyanProviderProps) => {
 			updatedAt: new Date().toISOString(),
 			root: createBanyanNode(),
 		};
-		// Main root node is hidden from user, so they can add multiple "roots" in their view of the document.
-		// Start them off with a new top-level node.
-		newDocument.root.children = [createBanyanNode("Start typing...")];
 
 		setStore(
 			produce((draft) => {
