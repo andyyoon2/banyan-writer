@@ -24,6 +24,12 @@ interface BanyanContextType {
 	addDocument: () => void;
 	addChildNode: (parentId: string, content?: string) => void;
 	handleNodeChange: (id: string, content: string) => void;
+	moveNode: (props: {
+		sourceParentId: string;
+		sourceIndex: number;
+		targetParentId: string;
+		targetIndex: number;
+	}) => void;
 }
 
 interface BanyanProviderProps {
@@ -44,6 +50,7 @@ const BanyanContext = createContext<BanyanContextType>({
 	addDocument: () => {},
 	addChildNode: () => {},
 	handleNodeChange: () => {},
+	moveNode: () => {},
 });
 
 export const useBanyanContext = () => {
@@ -116,6 +123,7 @@ export const BanyanProvider = (props: BanyanProviderProps) => {
 			produce((activeDoc) => {
 				// Could optimize lookups by passing through indexes
 				const editedNode = findNodeById(id, activeDoc.root);
+				// TODO: Test for error
 				editedNode.content = content;
 				activeDoc.updatedAt = new Date().toISOString();
 			}),
@@ -142,6 +150,55 @@ export const BanyanProvider = (props: BanyanProviderProps) => {
 		);
 	};
 
+	/** Move a child node from the source parent to the target parent, inserting it at the given index. */
+	const moveNode = ({
+		sourceParentId,
+		sourceIndex,
+		targetParentId,
+		targetIndex,
+	}: {
+		sourceParentId: string;
+		sourceIndex: number;
+		targetParentId: string;
+		targetIndex: number;
+	}) => {
+		if (
+			!sourceParentId ||
+			sourceIndex < 0 ||
+			!targetParentId ||
+			targetIndex < 0 ||
+			!store.documents.length
+		) {
+			return;
+		}
+
+		// Grab the active document, then use produce to update it
+		setStore(
+			"documents",
+			activeDocIndex(),
+			produce((activeDoc) => {
+				const sourceParent = findNodeById(sourceParentId, activeDoc.root);
+				if (!sourceParent) {
+					throw new Error("Invalid sourceParentId.");
+				}
+				const targetParent = findNodeById(targetParentId, activeDoc.root);
+				if (!targetParent) {
+					throw new Error("Invalid targetParentId.");
+				}
+				if (sourceIndex > sourceParent.children.length) {
+					throw new Error("sourceIndex out of bounds.");
+				}
+				if (targetIndex > targetParent.children.length) {
+					throw new Error("targetIndex out of bounds.");
+				}
+
+				// Remove node from source parent and add it to target parent
+				const [sourceNode] = sourceParent.children.splice(sourceIndex, 1);
+				targetParent.children.splice(targetIndex, 0, sourceNode);
+			}),
+		);
+	};
+
 	// --------------------------------------------------
 	// Return context value
 
@@ -152,6 +209,7 @@ export const BanyanProvider = (props: BanyanProviderProps) => {
 		addDocument,
 		addChildNode,
 		handleNodeChange,
+		moveNode,
 	} satisfies BanyanContextType;
 
 	return (
