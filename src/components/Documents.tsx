@@ -1,5 +1,6 @@
 import { formatISODate } from "../utils";
 import { useBanyanContext } from "./BanyanContext";
+import { Button } from "./Button";
 import { DocumentNode } from "./DocumentNode";
 
 export const Documents = () => {
@@ -8,15 +9,13 @@ export const Documents = () => {
 
 	return (
 		<>
-			<button type="button" onClick={addDocument}>
-				+ New Document
-			</button>
+			<Button onClick={addDocument}>+ New Document</Button>
 			{store.documents.map((doc, index) => (
-				<button type="button" onClick={() => setActiveDocIndex(index)}>
+				<Button onClick={() => setActiveDocIndex(index)}>
 					<h2>{doc.title}</h2>
 					<p>Created: {formatISODate(doc.createdAt)}</p>
 					<p>Modified: {formatISODate(doc.updatedAt)}</p>
-				</button>
+				</Button>
 			))}
 
 			<div class="flex flex-col gap-4">

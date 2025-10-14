@@ -1,5 +1,6 @@
 import type { BanyanNode } from "../data/tree";
 import { useBanyanContext } from "./BanyanContext";
+import { Button } from "./Button";
 import { NodeEditor } from "./NodeEditor";
 
 interface DocumentNodeProps {
@@ -23,13 +24,7 @@ export function DocumentNode(props: DocumentNodeProps) {
 			<div class="flex flex-col gap-4">
 				<NodeEditor content={props.node.content} onInput={handleInput} />
 
-				<button
-					type="button"
-					class="border border-primary-300 dark:border-primary-700 rounded px-4 py-1 cursor-pointer"
-					onClick={handleAddChildNode}
-				>
-					Add child node
-				</button>
+				<Button onClick={handleAddChildNode}>Add child node</Button>
 			</div>
 
 			<div class="flex flex-col gap-4">
