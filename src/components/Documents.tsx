@@ -21,7 +21,14 @@ export const Documents = () => {
 			<div class="flex flex-col gap-4">
 				<strong class="font-semibold">{activeDoc()?.title}</strong>
 
-				{activeDoc()?.root && <DocumentNode node={activeDoc().root} />}
+				{activeDoc()?.root && (
+					<DocumentNode
+						node={activeDoc().root}
+						parentId={null}
+						parentIndex={null}
+						nodeAndSiblingIds={[activeDoc().root.id]}
+					/>
+				)}
 
 				<pre class="whitespace-pre-wrap">
 					{JSON.stringify(activeDoc(), null, 2)}
