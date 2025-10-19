@@ -1,6 +1,6 @@
 import { render } from "@solidjs/testing-library";
 import userEvent from "@testing-library/user-event";
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
 import { type BanyanDocument, createBanyanNode } from "../../data/tree";
 import {
 	BanyanProvider,
@@ -14,7 +14,9 @@ test("renders all node content", () => {
 	root.children.push(createBanyanNode("Child Node 1"));
 	root.children.push(createBanyanNode("Child Node 2"));
 
-	const { getByText } = render(() => <DocumentNode node={root} />);
+	const { getByText } = render(() => (
+		<DocumentNode node={root} onMoveNode={vi.fn()} />
+	));
 	expect(getByText("Child Node 1")).toBeDefined();
 	expect(getByText("Child Node 2")).toBeDefined();
 });
@@ -30,7 +32,7 @@ test("updates screen with content edits", async () => {
 	// Need to connect the DocumentNode to the store for reactive updates
 	const Wrapper = () => {
 		const { activeDoc } = useBanyanContext();
-		return <DocumentNode node={activeDoc().root} />;
+		return <DocumentNode node={activeDoc().root} onMoveNode={vi.fn()} />;
 	};
 
 	const { getByText, getByRole } = render(() => (
@@ -44,4 +46,34 @@ test("updates screen with content edits", async () => {
 
 	// Assert
 	expect(getByText("Hello, world!")).toBeDefined();
+});
+
+// TODO: Improve the testing setup
+test.skip("move up moves the node up in the list", async () => {
+	// Arrange
+	const user = userEvent.setup();
+	const root = createBanyanNode("root");
+	root.children.push(createBanyanNode("Child Node 1"));
+	root.children.push(createBanyanNode("Child Node 2"));
+	const initialStore = {
+		documents: [{ root } as BanyanDocument],
+	} satisfies BanyanStore;
+
+	// Need to connect the DocumentNode to the store for reactive updates
+	const Wrapper = () => {
+		const { activeDoc } = useBanyanContext();
+		return <DocumentNode node={activeDoc().root} onMoveNode={vi.fn()} />;
+	};
+
+	const { getByText, getByRole } = render(() => (
+		<BanyanProvider initialStore={initialStore}>
+			<Wrapper />
+		</BanyanProvider>
+	));
+
+	// Act
+	// await user.type(getByRole("textbox"), ", world!");
+
+	// // Assert
+	// expect(getByText("Hello, world!")).toBeDefined();
 });

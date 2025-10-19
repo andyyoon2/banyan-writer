@@ -23,10 +23,6 @@ export const Documents = () => {
 
 				{activeDoc()?.root && <DocumentNode node={activeDoc().root} />}
 
-				{/*{activeDoc()?.root?.children.map((child) => (
-					<DocumentNode node={child} />
-				))}*/}
-
 				<pre class="whitespace-pre-wrap">
 					{JSON.stringify(activeDoc(), null, 2)}
 				</pre>
