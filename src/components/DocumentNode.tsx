@@ -1,4 +1,3 @@
-import { createEffect } from "solid-js";
 import type { BanyanNode } from "../data/tree";
 import { useBanyanContext } from "./BanyanContext";
 import { Button } from "./Button";

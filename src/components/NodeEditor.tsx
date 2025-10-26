@@ -1,4 +1,4 @@
-import { createEffect } from "solid-js";
+import { createResource, Show, Suspense } from "solid-js";
 import { parseMarkdown, renderTree } from "../lib/markdown";
 
 interface NodeEditorProps {
@@ -6,17 +6,27 @@ interface NodeEditorProps {
 	onInput: (event: InputEvent) => void;
 }
 
+async function renderMarkdownContent(content: string) {
+	const root = await parseMarkdown(content);
+	return renderTree(root);
+}
+
 export const NodeEditor = (props: NodeEditorProps) => {
-	// createEffect(() => {
-	// 	const root = parseMarkdown(props.content);
-	// 	// renderTree(root)
-	// })
+	const [jsxTree] = createResource(() => props.content, renderMarkdownContent);
 
 	return (
 		<div class="bg-primary-300 dark:bg-primary-700 w-lg p-4 font-mono flex flex-col gap-4">
-			{renderTree(parseMarkdown(props.content))}
-			<textarea value={props.content} onInput={props.onInput} />
-			{/* <div>{props.content}</div> */}
+			<Show when={jsxTree.error}>Error: {jsxTree.error}</Show>
+			<Suspense>
+				<div class="[&_ul]:list-disc [&_ol]:list-decimal [&_ul,&_ol]:pl-4 [&_li]:pl-2">
+					{jsxTree()}
+				</div>
+			</Suspense>
+			<textarea
+				value={props.content}
+				onInput={props.onInput}
+				class="border border-primary-400 dark:border-primary-600 rounded p-2 focus:outline-none focus:ring-1"
+			/>
 		</div>
 	);
 };
