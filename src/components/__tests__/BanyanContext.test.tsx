@@ -5,6 +5,7 @@ import { describe, expect, test } from "vitest";
 import {
 	type BanyanDocument,
 	type BanyanNode,
+	createBanyanDocument,
 	createBanyanNode,
 } from "../../data/tree";
 import {
@@ -14,13 +15,31 @@ import {
 	useBanyanContext,
 } from "../BanyanContext";
 
+interface SetupBanyanContextProps {
+	root?: BanyanNode;
+	documents?: BanyanDocument[];
+}
+
 /**
  * Create the banyan context with the given root as the first document.
  * @returns The resulting BanyanContext
  */
-function setupBanyanContext(root: BanyanNode): BanyanContextType {
+function setupBanyanContext({
+	root,
+	documents,
+}: SetupBanyanContextProps): BanyanContextType {
+	if (!root && !documents) {
+		throw new Error("Either root or documents must be provided");
+	}
+
+	const initialDocuments = documents ?? [];
+	if (!initialDocuments.length && root) {
+		initialDocuments.push(createBanyanDocument());
+		initialDocuments[0].root = root;
+	}
+
 	const initialStore = {
-		documents: [{ root } as BanyanDocument],
+		documents: initialDocuments,
 	} satisfies BanyanStore;
 
 	const { result } = renderHook(() => useBanyanContext(), {
@@ -36,7 +55,7 @@ function setupBanyanContext(root: BanyanNode): BanyanContextType {
 describe("addChildNode", () => {
 	test("adds new child node under the given node", () => {
 		const root = createBanyanNode("root");
-		const { store, addChildNode } = setupBanyanContext(root);
+		const { store, addChildNode } = setupBanyanContext({ root });
 		expect(store.documents[0].root.children.length).toBe(0);
 
 		addChildNode(root.id);
@@ -45,7 +64,7 @@ describe("addChildNode", () => {
 
 	test("errors if given invalid parent ID", () => {
 		const root = createBanyanNode("root");
-		const { addChildNode } = setupBanyanContext(root);
+		const { addChildNode } = setupBanyanContext({ root });
 
 		expect(() => addChildNode("invalid")).toThrowError();
 	});
@@ -54,7 +73,7 @@ describe("addChildNode", () => {
 describe("handleNodeChange", () => {
 	test("updates node content", () => {
 		const root = createBanyanNode("root");
-		const { store, handleNodeChange } = setupBanyanContext(root);
+		const { store, handleNodeChange } = setupBanyanContext({ root });
 		// TODO: I shouldn't be testing by indexing documents. Should expose a getter from the context and use that.
 		expect(store.documents[0].root.content).toEqual("root");
 		handleNodeChange(root.id, "new content");
@@ -66,7 +85,7 @@ describe("handleNodeChange", () => {
 		const child = createBanyanNode("child content");
 		root.children.push(child);
 
-		const { store, handleNodeChange } = setupBanyanContext(root);
+		const { store, handleNodeChange } = setupBanyanContext({ root });
 		expect(store.documents[0].root.children[0].content).toEqual(
 			"child content",
 		);
@@ -87,7 +106,7 @@ describe("moveNode", () => {
 		root.children.push(child1);
 		root.children.push(child2);
 
-		const { store, moveNode } = setupBanyanContext(root);
+		const { store, moveNode } = setupBanyanContext({ root });
 
 		const assertNoChange = () => {
 			expect(store.documents[0].root).toEqual(root);
@@ -169,7 +188,7 @@ describe("moveNode", () => {
 		root.children.push(child1);
 		root.children.push(child2);
 
-		const { store, moveNode } = setupBanyanContext(root);
+		const { store, moveNode } = setupBanyanContext({ root });
 
 		// Move first child to index 1
 		moveNode({
@@ -201,7 +220,7 @@ describe("moveNode", () => {
 		root.children.push(child1);
 		root.children.push(child2);
 
-		const { store, moveNode } = setupBanyanContext(root);
+		const { store, moveNode } = setupBanyanContext({ root });
 
 		// Move grandchild from child1 to child2
 		moveNode({
@@ -224,7 +243,7 @@ describe("moveNode", () => {
 		root.children.push(child1);
 		root.children.push(child2);
 
-		const { store, moveNode } = setupBanyanContext(root);
+		const { store, moveNode } = setupBanyanContext({ root });
 
 		// Move the child with the grandchild
 		moveNode({
@@ -237,5 +256,53 @@ describe("moveNode", () => {
 		expect(store.documents[0].root.children[1].children[0]).toEqual(
 			grandchild1,
 		);
+	});
+});
+
+describe("deleteDocument", () => {
+	test("handles empty input", () => {
+		const root = createBanyanNode("root");
+		const { store, deleteDocument } = setupBanyanContext({ root });
+		deleteDocument("");
+		expect(store.documents.length).toBe(1);
+
+		deleteDocument("invalid id");
+		expect(store.documents.length).toBe(1);
+	});
+
+	test("deletes the given document", () => {
+		const documents = [createBanyanDocument()];
+		const { store, activeDoc, deleteDocument } = setupBanyanContext({
+			documents,
+		});
+		deleteDocument(documents[0].id);
+		expect(store.documents.length).toBe(0);
+		expect(activeDoc()).toBe(null);
+	});
+
+	test("deletes the given document and sets the active document to the next one", () => {
+		const doc1 = createBanyanDocument();
+		const doc2 = createBanyanDocument();
+		const documents = [doc1, doc2];
+		const { store, activeDoc, deleteDocument } = setupBanyanContext({
+			documents,
+		});
+		expect(store.documents.length).toBe(2);
+		deleteDocument(doc1.id);
+		expect(store.documents.length).toBe(1);
+		expect(activeDoc()).toEqual(doc2);
+	});
+
+	test("when deleting the last document, sets the active document to the previous one", () => {
+		const doc1 = createBanyanDocument();
+		const doc2 = createBanyanDocument();
+		const documents = [doc1, doc2];
+		const { store, activeDoc, deleteDocument } = setupBanyanContext({
+			documents,
+		});
+		expect(store.documents.length).toBe(2);
+		deleteDocument(doc2.id);
+		expect(store.documents.length).toBe(1);
+		expect(activeDoc()).toEqual(doc1);
 	});
 });

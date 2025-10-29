@@ -6,8 +6,11 @@ import {
 	useContext,
 } from "solid-js";
 import { createStore, produce } from "solid-js/store";
-import { v4 as uuidv4 } from "uuid";
-import { type BanyanDocument, createBanyanNode } from "../data/tree";
+import {
+	type BanyanDocument,
+	createBanyanDocument,
+	createBanyanNode,
+} from "../data/tree";
 import { findNodeById } from "../utils";
 
 // --------------------------------------------------
@@ -22,6 +25,7 @@ export interface BanyanContextType {
 	activeDoc: () => BanyanDocument | null;
 	setActiveDocIndex: (index: number) => void;
 	addDocument: () => void;
+	deleteDocument: (id: string) => void;
 	addChildNode: (parentId: string, content?: string) => void;
 	handleNodeChange: (id: string, content: string) => void;
 	moveNode: (props: {
@@ -48,6 +52,7 @@ const BanyanContext = createContext<BanyanContextType>({
 	activeDoc: () => null,
 	setActiveDocIndex: () => {},
 	addDocument: () => {},
+	deleteDocument: () => {},
 	addChildNode: () => {},
 	handleNodeChange: () => {},
 	moveNode: () => {},
@@ -96,17 +101,22 @@ export const BanyanProvider = (props: BanyanProviderProps) => {
 	// Event handlers
 
 	const addDocument = () => {
-		const newDocument: BanyanDocument = {
-			id: uuidv4(),
-			title: "New Document",
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString(),
-			root: createBanyanNode(),
-		};
+		const newDocument = createBanyanDocument();
 
 		setStore(
 			produce((draft) => {
 				draft.documents.push(newDocument);
+			}),
+		);
+	};
+
+	const deleteDocument = (id: string) => {
+		if (activeDocIndex() === store.documents.length - 1) {
+			setActiveDocIndex(Math.max(0, activeDocIndex() - 1));
+		}
+		setStore(
+			produce((draft) => {
+				draft.documents = draft.documents.filter((doc) => doc.id !== id);
 			}),
 		);
 	};
@@ -207,6 +217,7 @@ export const BanyanProvider = (props: BanyanProviderProps) => {
 		activeDoc,
 		setActiveDocIndex,
 		addDocument,
+		deleteDocument,
 		addChildNode,
 		handleNodeChange,
 		moveNode,

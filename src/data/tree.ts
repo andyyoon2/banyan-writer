@@ -21,3 +21,18 @@ export function createBanyanNode(content?: string): BanyanNode {
 		children: [],
 	};
 }
+
+export function createBanyanDocument(props?: {
+	root?: BanyanNode;
+	title?: string;
+}): BanyanDocument {
+	const root = props?.root ?? createBanyanNode();
+	const title = props?.title ?? "";
+	return {
+		id: uuidv4(),
+		title,
+		createdAt: new Date().toISOString(),
+		updatedAt: new Date().toISOString(),
+		root,
+	};
+}
