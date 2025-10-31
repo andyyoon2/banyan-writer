@@ -1,3 +1,4 @@
+import type { JSXElement } from "solid-js";
 import type { BanyanNode } from "../data/tree";
 import { useBanyanContext } from "./BanyanContext";
 import { Button } from "./Button";
@@ -10,6 +11,7 @@ interface DocumentNodeProps {
 	parentId: string | null;
 	parentIndex: number | null;
 	nodeAndSiblingIds: string[];
+	children?: JSXElement;
 }
 
 export function DocumentNode(props: DocumentNodeProps) {
@@ -85,59 +87,48 @@ export function DocumentNode(props: DocumentNodeProps) {
 	};
 
 	return (
-		<div class="flex gap-4">
-			{/* Debug */}
-			{/*<pre class="whitespace-pre-wrap text-sm w-80">
-				I am node {props.node.id}
-				<br />
-				Me and my siblings {JSON.stringify(props.nodeAndSiblingIds)}
-				<br />
-				My children{" "}
-				{JSON.stringify(props.node.children.map((child) => child.id))}
-			</pre>*/}
-
-			<div class="flex flex-col gap-4">
+		<div class="flex items-start gap-4">
+			<div class="flex flex-col shrink-0 gap-4 bg-primary-300 dark:bg-primary-700 w-lg p-4 rounded">
 				<NodeEditor content={props.node.content} onInput={handleInput} />
-
-				<Button onClick={handleAddChildNode}>Add child node</Button>
+				<div class="flex gap-2">
+					{props.children}
+					<Button onClick={handleAddChildNode}>+ New child</Button>
+				</div>
 			</div>
 
 			<div class="flex flex-col gap-4">
 				{props.node.children.map((child, index) => (
-					<div class="flex">
-						<DocumentNode
-							node={child}
-							parentId={props.node.id}
-							parentIndex={index}
-							nodeAndSiblingIds={props.node.children.map((child) => child.id)}
-						/>
-						<div class="flex flex-col gap-2">
-							<Button
-								onClick={() => handleMoveChildNode("up", index)}
-								disabled={index <= 0}
-							>
-								Up
-							</Button>
-							<Button
-								onClick={() => handleMoveChildNode("down", index)}
-								disabled={index >= props.node.children.length - 1}
-							>
-								Down
-							</Button>
-							<Button
-								onClick={() => handleMoveChildNode("left", index)}
-								disabled={props.parentIndex === null}
-							>
-								Left
-							</Button>
-							<Button
-								onClick={() => handleMoveChildNode("right", index)}
-								disabled={props.node.children.length <= 1}
-							>
-								Right
-							</Button>
-						</div>
-					</div>
+					<DocumentNode
+						node={child}
+						parentId={props.node.id}
+						parentIndex={index}
+						nodeAndSiblingIds={props.node.children.map((child) => child.id)}
+					>
+						<Button
+							onClick={() => handleMoveChildNode("up", index)}
+							disabled={index <= 0}
+						>
+							↑
+						</Button>
+						<Button
+							onClick={() => handleMoveChildNode("down", index)}
+							disabled={index >= props.node.children.length - 1}
+						>
+							↓
+						</Button>
+						<Button
+							onClick={() => handleMoveChildNode("left", index)}
+							disabled={props.parentIndex === null}
+						>
+							←
+						</Button>
+						<Button
+							onClick={() => handleMoveChildNode("right", index)}
+							disabled={props.node.children.length <= 1}
+						>
+							→
+						</Button>
+					</DocumentNode>
 				))}
 			</div>
 		</div>

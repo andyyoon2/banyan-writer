@@ -15,7 +15,7 @@ export const NodeEditor = (props: NodeEditorProps) => {
 	const [jsxTree] = createResource(() => props.content, renderMarkdownContent);
 
 	return (
-		<div class="bg-primary-300 dark:bg-primary-700 w-lg p-4 font-mono flex flex-col gap-4">
+		<div class="font-mono flex flex-col gap-4">
 			<Show when={jsxTree.error}>Error: {jsxTree.error}</Show>
 			<Suspense>
 				<div class="[&_ul]:list-disc [&_ol]:list-decimal [&_ul,&_ol]:pl-4 [&_li]:pl-2">
