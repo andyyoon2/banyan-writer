@@ -34,6 +34,7 @@ export interface BanyanContextType {
 		targetParentId: string;
 		targetIndex: number;
 	}) => void;
+	deleteNode: (props: { parentId: string; index: number }) => void;
 }
 
 interface BanyanProviderProps {
@@ -56,6 +57,7 @@ const BanyanContext = createContext<BanyanContextType>({
 	addChildNode: () => {},
 	handleNodeChange: () => {},
 	moveNode: () => {},
+	deleteNode: () => {},
 });
 
 export const useBanyanContext = () => {
@@ -209,6 +211,32 @@ export const BanyanProvider = (props: BanyanProviderProps) => {
 		);
 	};
 
+	const deleteNode = ({
+		parentId,
+		index,
+	}: {
+		parentId: string;
+		index: number;
+	}) => {
+		if (!store.documents.length || !parentId || index < 0) {
+			return;
+		}
+		setStore(
+			"documents",
+			activeDocIndex(),
+			produce((activeDoc) => {
+				const parent = findNodeById(parentId, activeDoc.root);
+				if (!parent) {
+					throw new Error("Invalid parentId.");
+				}
+				if (index > parent.children.length) {
+					throw new Error("index out of bounds.");
+				}
+				parent.children.splice(index, 1);
+			}),
+		);
+	};
+
 	// --------------------------------------------------
 	// Return context value
 
@@ -221,6 +249,7 @@ export const BanyanProvider = (props: BanyanProviderProps) => {
 		addChildNode,
 		handleNodeChange,
 		moveNode,
+		deleteNode,
 	} satisfies BanyanContextType;
 
 	return (

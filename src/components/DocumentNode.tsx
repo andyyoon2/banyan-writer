@@ -15,7 +15,8 @@ interface DocumentNodeProps {
 }
 
 export function DocumentNode(props: DocumentNodeProps) {
-	const { handleNodeChange, addChildNode, moveNode } = useBanyanContext();
+	const { handleNodeChange, addChildNode, deleteNode, moveNode } =
+		useBanyanContext();
 
 	const handleInput = (event: InputEvent) => {
 		const value = (event.currentTarget as HTMLTextAreaElement).value;
@@ -24,6 +25,10 @@ export function DocumentNode(props: DocumentNodeProps) {
 
 	const handleAddChildNode = () => {
 		addChildNode(props.node.id);
+	};
+
+	const handleDeleteChildNode = (index: number) => {
+		deleteNode({ parentId: props.node.id, index });
 	};
 
 	const handleMoveChildNode = (direction: Direction, nodeIndex: number) => {
@@ -128,6 +133,7 @@ export function DocumentNode(props: DocumentNodeProps) {
 						>
 							→
 						</Button>
+						<Button onClick={() => handleDeleteChildNode(index)}>Delete</Button>
 					</DocumentNode>
 				))}
 			</div>

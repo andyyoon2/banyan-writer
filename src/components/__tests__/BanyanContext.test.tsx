@@ -259,6 +259,41 @@ describe("moveNode", () => {
 	});
 });
 
+describe("deleteNode", () => {
+	test("handles empty input", () => {
+		const { store, deleteNode } = setupBanyanContext({
+			root: {} as BanyanNode,
+		});
+		deleteNode({ parentId: "", index: 0 });
+		expect(store.documents[0].root).toBeDefined();
+	});
+
+	test("errors if index out of bounds", () => {
+		const root = createBanyanNode("root");
+		const child = createBanyanNode("child");
+		root.children.push(child);
+		const { deleteNode } = setupBanyanContext({ root });
+		expect(() => deleteNode({ parentId: root.id, index: 2 })).toThrow();
+	});
+
+	test("errors if invalid node id", () => {
+		const root = createBanyanNode("root");
+		const { deleteNode } = setupBanyanContext({ root });
+		expect(() =>
+			deleteNode({ parentId: "invalid node id", index: 2 }),
+		).toThrow();
+	});
+
+	test("deletes given node", () => {
+		const root = createBanyanNode("root");
+		const child = createBanyanNode("child");
+		root.children.push(child);
+		const { store, deleteNode } = setupBanyanContext({ root });
+		deleteNode({ parentId: root.id, index: 0 });
+		expect(store.documents[0].root.children.length).toBe(0);
+	});
+});
+
 describe("deleteDocument", () => {
 	test("handles empty input", () => {
 		const root = createBanyanNode("root");
