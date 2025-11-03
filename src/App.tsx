@@ -4,13 +4,13 @@ import { Documents } from "./components/Documents";
 
 const App: Component = () => {
 	return (
-		<BanyanProvider>
-			<main class="p-4 overflow-auto">
-				<h1 class="font-semibold">Banyan Writer</h1>
-				<Documents />
-			</main>
-		</BanyanProvider>
-	);
+    <BanyanProvider>
+      <main class="p-4">
+        <h1 class="font-semibold">Banyan Writer</h1>
+        <Documents />
+      </main>
+    </BanyanProvider>
+  );
 };
 
 export default App;

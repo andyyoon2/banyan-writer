@@ -92,51 +92,52 @@ export function DocumentNode(props: DocumentNodeProps) {
 	};
 
 	return (
-		<div class="flex items-start gap-4">
-			<div class="flex flex-col shrink-0 gap-4 bg-primary-300 dark:bg-primary-700 w-lg p-4 rounded">
-				<NodeEditor content={props.node.content} onInput={handleInput} />
-				<div class="flex gap-2">
-					{props.children}
-					<Button onClick={handleAddChildNode}>+ New child</Button>
-				</div>
-			</div>
+    <div class="flex items-start gap-4">
+      <div class="flex flex-col shrink-0 gap-4 bg-primary-300 dark:bg-primary-700 w-lg p-4 rounded sticky top-4">
+        <NodeEditor content={props.node.content} onInput={handleInput} />
+        <div class="flex gap-2 flex-wrap">
+          {props.children}
+          <Button onClick={handleAddChildNode}>+ New child</Button>
+        </div>
+      </div>
 
-			<div class="flex flex-col gap-4">
-				{props.node.children.map((child, index) => (
-					<DocumentNode
-						node={child}
-						parentId={props.node.id}
-						parentIndex={index}
-						nodeAndSiblingIds={props.node.children.map((child) => child.id)}
-					>
-						<Button
-							onClick={() => handleMoveChildNode("up", index)}
-							disabled={index <= 0}
-						>
-							↑
-						</Button>
-						<Button
-							onClick={() => handleMoveChildNode("down", index)}
-							disabled={index >= props.node.children.length - 1}
-						>
-							↓
-						</Button>
-						<Button
-							onClick={() => handleMoveChildNode("left", index)}
-							disabled={props.parentIndex === null}
-						>
-							←
-						</Button>
-						<Button
-							onClick={() => handleMoveChildNode("right", index)}
-							disabled={props.node.children.length <= 1}
-						>
-							→
-						</Button>
-						<Button onClick={() => handleDeleteChildNode(index)}>Delete</Button>
-					</DocumentNode>
-				))}
-			</div>
-		</div>
-	);
+      <div class="flex flex-col gap-4">
+        {props.node.children.map((child, index) => (
+          <DocumentNode
+            node={child}
+            parentId={props.node.id}
+            parentIndex={index}
+            nodeAndSiblingIds={props.node.children.map((child) => child.id)}
+          >
+            <Button
+              onClick={() => handleMoveChildNode("up", index)}
+              disabled={index <= 0}
+            >
+              ↑
+            </Button>
+            <Button
+              onClick={() => handleMoveChildNode("down", index)}
+              disabled={index >= props.node.children.length - 1}
+            >
+              ↓
+            </Button>
+            <Button
+              onClick={() => handleMoveChildNode("left", index)}
+              disabled={props.parentIndex === null}
+            >
+              ←
+            </Button>
+            <Button
+              onClick={() => handleMoveChildNode("right", index)}
+              disabled={props.node.children.length <= 1}
+            >
+              →
+            </Button>
+            <Button onClick={() => handleDeleteChildNode(index)}>Delete</Button>
+            <Button onClick={handleAddChildNode}>New sibling</Button>
+          </DocumentNode>
+        ))}
+      </div>
+    </div>
+  );
 }

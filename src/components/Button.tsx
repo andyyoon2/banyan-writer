@@ -10,15 +10,15 @@ interface ButtonProps extends JSX.ButtonHTMLAttributes<HTMLButtonElement> {
 
 export function Button(props: ButtonProps) {
 	return (
-		<button
-			{...props}
-			type={props.type || "button"}
-			class={`${
-				props.class || ""
-			} border border-primary-400 dark:border-primary-600 rounded px-4 py-1 cursor-pointer disabled:bg-primary-200 dark:disabled:bg-primary-800 disabled:cursor-not-allowed`}
-			onClick={props.onClick}
-		>
-			{props.children}
-		</button>
-	);
+    <button
+      {...props}
+      type={props.type || "button"}
+      class={`${
+        props.class || ""
+      } border border-primary-400 dark:border-primary-600 rounded px-4 py-1 cursor-pointer bg-primary-200 dark:bg-primary-800 disabled:bg-primary-300 dark:disabled:bg-primary-700 disabled:cursor-not-allowed`}
+      onClick={props.onClick}
+    >
+      {props.children}
+    </button>
+  );
 }
